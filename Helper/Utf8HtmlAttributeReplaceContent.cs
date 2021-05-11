@@ -11,12 +11,16 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GitHubProxy.Helper
 {
     public class Utf8HtmlAttributeReplaceContent : HttpContent
     {
         private const string DefaultMediaType = "text/plain";
+
+        private ILogger _logger = NullLogger.Instance;
 
         private readonly Stream _stream;
         private readonly Utf8StringReplaceDirective[] _directives;
@@ -63,6 +67,11 @@ namespace GitHubProxy.Helper
             MediaTypeHeaderValue headerValue = new MediaTypeHeaderValue((mediaType is null) ? DefaultMediaType : mediaType);
             headerValue.CharSet = Encoding.UTF8.WebName;
             Headers.ContentType = headerValue;
+        }
+
+        public void SetLogger(ILogger logger)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         protected override bool TryComputeLength(out long length)
@@ -319,7 +328,8 @@ namespace GitHubProxy.Helper
                                 if (pos < 0)
                                 {
                                     SequencePosition examined = buffer.End;
-                                    buffer = buffer.Slice(0, buffer.Length - (isFinal ? 0 : 3));
+                                    long length = Math.Max(0, buffer.Length - (isFinal ? 0 : 3));
+                                    buffer = buffer.Slice(0, length);
                                     await writer.WriteAsync(buffer, cancellationToken).ConfigureAwait(false);
                                     source.AdvanceTo(buffer.End, examined);
                                     break;
@@ -356,9 +366,9 @@ namespace GitHubProxy.Helper
                 {
                     await SerializeToWriter(writer, _cancellationToken);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Ignore
+                    _logger.LogWarning(ex, "Transform failed.");
                 }
             }, cancellationToken);
             return Task.FromResult(pipe.Reader.AsStream());
@@ -374,9 +384,9 @@ namespace GitHubProxy.Helper
                 {
                     await SerializeToWriter(writer, _cancellationToken);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Ignore
+                    _logger.LogWarning(ex, "Transform failed.");
                 }
             });
             return Task.FromResult(pipe.Reader.AsStream());

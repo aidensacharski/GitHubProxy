@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitHubProxy.Helper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Yarp.ReverseProxy.Abstractions.Config;
 using Yarp.ReverseProxy.Service.RuntimeModel.Transforms;
@@ -19,8 +20,9 @@ namespace GitHubProxy.Proxy
         private readonly string _releasesDomain;
 
         private readonly Utf8StringReplaceDirective[] _directives;
+        private readonly ILogger _logger;
 
-        public GitHubProxyMainSiteTransformer(IGitHubProxyConfiguration configuration)
+        public GitHubProxyMainSiteTransformer(IGitHubProxyConfiguration configuration, ILogger<GitHubProxyMainSiteTransformer> logger)
         {
             _homeDomain = configuration.HomeDomain;
             _rawDomain = configuration.RawDomain;
@@ -40,6 +42,7 @@ namespace GitHubProxy.Proxy
                 new Utf8StringReplaceDirective("<meta name=\"expected-hostname\" content=\"github.com\">", "<meta name=\"expected-hostname\" content=\"" + configuration.HomeDomainHost + "\">"),
 
             };
+            _logger = logger;
         }
 
         public void ValidateCluster(TransformClusterValidationContext context) { }
@@ -117,7 +120,7 @@ namespace GitHubProxy.Proxy
         private async Task ReadAndReplaceAsync(HttpResponseMessage response, string? charset, CancellationToken cancellationToken)
         {
             HttpContent content = response.Content;
-            HttpContent replacedContent;
+            Utf8HtmlAttributeReplaceContent replacedContent;
             if ("utf-8".Equals(charset, StringComparison.OrdinalIgnoreCase))
             {
                 Stream stream = await content.ReadAsStreamAsync(cancellationToken);
@@ -130,6 +133,7 @@ namespace GitHubProxy.Proxy
                 replacedContent = new Utf8HtmlAttributeReplaceContent(html, _directives, "text/html", cancellationToken);
             }
 
+            replacedContent.SetLogger(_logger);
             response.Content = replacedContent;
         }
     }
