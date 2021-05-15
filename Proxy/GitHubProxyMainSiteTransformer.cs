@@ -38,9 +38,6 @@ namespace GitHubProxy.Proxy
                 new Utf8StringReplaceDirective("https://camo.githubusercontent.com", configuration.CamoDomain),
                 new Utf8StringReplaceDirective("https://user-images.githubusercontent.com", configuration.UserImagesDomain),
                 new Utf8StringReplaceDirective("collector.githubapp.com", configuration.BlackholeDomainAuthority),
-                new Utf8StringReplaceDirective("<meta name=\"hostname\" content=\"github.com\">", "<meta name=\"hostname\" content=\"" + configuration.HomeDomainHost + "\">"),
-                new Utf8StringReplaceDirective("<meta name=\"expected-hostname\" content=\"github.com\">", "<meta name=\"expected-hostname\" content=\"" + configuration.HomeDomainHost + "\">"),
-
             };
             _logger = logger;
         }
