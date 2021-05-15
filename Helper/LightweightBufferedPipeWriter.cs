@@ -96,11 +96,18 @@ namespace GitHubProxy.Helper
             _bytesFilled = 0;
             try
             {
-                await _writer.FlushAsync(cancellationToken).ConfigureAwait(false);
+                try
+                {
+                    await _writer.FlushAsync(cancellationToken).ConfigureAwait(false);
+                }
+                finally
+                {
+                    await _writer.CompleteAsync().ConfigureAwait(false);
+                }
             }
-            finally
+            catch
             {
-                await _writer.CompleteAsync().ConfigureAwait(false);
+                // Ignore error
             }
         }
 

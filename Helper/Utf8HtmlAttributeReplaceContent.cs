@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GitHubProxy.Helper
 {
-    public class Utf8HtmlAttributeReplaceContent : HttpContent
+    public sealed class Utf8HtmlAttributeReplaceContent : HttpContent
     {
         private const string DefaultMediaType = "text/plain";
 
@@ -368,29 +368,17 @@ namespace GitHubProxy.Helper
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, "Transform failed.");
+                    if (ex is not OperationCanceledException)
+                    {
+                        _logger.LogWarning(ex, "Transform failed.");
+                    }
                 }
             }, cancellationToken);
             return Task.FromResult(pipe.Reader.AsStream());
         }
 
         protected override Task<Stream> CreateContentReadStreamAsync()
-        {
-            var pipe = new Pipe();
-            var writer = new LightweightBufferedPipeWriter(pipe.Writer);
-            Task.Run(async () =>
-            {
-                try
-                {
-                    await SerializeToWriter(writer, _cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Transform failed.");
-                }
-            });
-            return Task.FromResult(pipe.Reader.AsStream());
-        }
+            => CreateContentReadStreamAsync(CancellationToken.None);
 
         private enum ReadState
         {
