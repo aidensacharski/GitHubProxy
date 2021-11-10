@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Extensions.Primitives;
-using Yarp.ReverseProxy.Abstractions;
-using Yarp.ReverseProxy.Service;
+using Yarp.ReverseProxy.Configuration;
 
 namespace GitHubProxy.Proxy
 {
@@ -15,158 +14,158 @@ namespace GitHubProxy.Proxy
         {
             if (!configuration.IsConfigured)
             {
-                _config = new InMemoryConfig(Array.Empty<ProxyRoute>(), Array.Empty<Cluster>());
+                _config = new InMemoryConfig(Array.Empty<RouteConfig>(), Array.Empty<ClusterConfig>());
                 return;
             }
 
             _config = new InMemoryConfig(
-                new[]
+                new RouteConfig[]
                 {
-                    new ProxyRoute()
+                    new ()
                     {
                         RouteId = "__github_mainRoute",
                         ClusterId = "__github_homeCluster",
-                        Match = new ProxyMatch
+                        Match = new RouteMatch
                         {
                             Path = "{**catch-all}",
                             Hosts = new [] { configuration.HomeDomainAuthority }
                         }
                     },
-                    new ProxyRoute()
+                    new ()
                     {
                         RouteId = "__github_assetsRoute",
                         ClusterId = "__github_assetsCluster",
-                        Match = new ProxyMatch
+                        Match = new RouteMatch
                         {
                             Path = "{**catch-all}",
                             Hosts = new [] { configuration.AssetsDomainAuthority }
                         }
                     },
-                    new ProxyRoute()
+                    new ()
                     {
                         RouteId = "__github_avatarsRoute",
                         ClusterId = "__github_avatarsCluster",
-                        Match = new ProxyMatch
+                        Match = new RouteMatch
                         {
                             Path = "{**catch-all}",
                             Hosts = new [] { configuration.AvatarsDomainAuthority }
                         }
                     },
-                    new ProxyRoute()
+                    new ()
                     {
                         RouteId = "__github_rawRoute",
                         ClusterId = "__github_rawCluster",
-                        Match = new ProxyMatch
+                        Match = new RouteMatch
                         {
                             Path = "{**catch-all}",
                             Hosts = new [] { configuration.RawDomainAuthority }
                         }
                     },
-                    new ProxyRoute()
+                    new ()
                     {
                         RouteId = "__github_camoRoute",
                         ClusterId = "__github_camoCluster",
-                        Match = new ProxyMatch
+                        Match = new RouteMatch
                         {
                             Path = "{**catch-all}",
                             Hosts = new [] { configuration.CamoDomainAuthority }
                         }
                     },
-                    new ProxyRoute()
+                    new ()
                     {
                         RouteId = "__github_codeloadRoute",
                         ClusterId = "__github_codeloadCluster",
-                        Match = new ProxyMatch
+                        Match = new RouteMatch
                         {
                             Path = "{**catch-all}",
                             Hosts = new [] { configuration.CodeloadDomainAuthority }
                         }
                     },
-                    new ProxyRoute()
+                    new ()
                     {
                         RouteId = "__github_releasesRoute",
                         ClusterId = "__github_releasesCluster",
-                        Match = new ProxyMatch
+                        Match = new RouteMatch
                         {
                             Path = "{**catch-all}",
                             Hosts = new [] { configuration.ReleasesDomainAuthority }
                         }
                     },
-                    new ProxyRoute()
+                    new()
                     {
                         RouteId = "__github_userImagesRoute",
                         ClusterId = "__github_userImagesCluster",
-                        Match = new ProxyMatch
+                        Match = new RouteMatch
                         {
                             Path = "{**catch-all}",
                             Hosts = new [] { configuration.UserImagesDomainAuthority }
                         }
                     }
                 },
-                new[]
+                new ClusterConfig[]
                 {
-                    new Cluster()
+                    new ()
                     {
-                        Id = "__github_homeCluster",
-                        Destinations = new Dictionary<string, Destination>(StringComparer.OrdinalIgnoreCase)
+                        ClusterId = "__github_homeCluster",
+                        Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
                         {
-                            { "destination1", new Destination() { Address = "https://github.com" } }
+                            { "destination1", new DestinationConfig() { Address = "https://github.com" } }
                         }
                     },
-                    new Cluster()
+                    new ()
                     {
-                        Id = "__github_assetsCluster",
-                        Destinations = new Dictionary<string, Destination>(StringComparer.OrdinalIgnoreCase)
+                        ClusterId = "__github_assetsCluster",
+                        Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
                         {
-                            { "destination1", new Destination() { Address = "https://github.githubassets.com" } }
+                            { "destination1", new DestinationConfig() { Address = "https://github.githubassets.com" } }
                         }
                     },
-                    new Cluster()
+                    new ()
                     {
-                        Id = "__github_avatarsCluster",
-                        Destinations = new Dictionary<string, Destination>(StringComparer.OrdinalIgnoreCase)
+                        ClusterId = "__github_avatarsCluster",
+                        Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
                         {
-                            { "destination1", new Destination() { Address = "https://avatars.githubusercontent.com" } }
+                            { "destination1", new DestinationConfig() { Address = "https://avatars.githubusercontent.com" } }
                         }
                     },
-                    new Cluster()
+                    new ()
                     {
-                        Id = "__github_rawCluster",
-                        Destinations = new Dictionary<string, Destination>(StringComparer.OrdinalIgnoreCase)
+                        ClusterId = "__github_rawCluster",
+                        Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
                         {
-                            { "destination1", new Destination() { Address = "https://raw.githubusercontent.com" } }
+                            { "destination1", new DestinationConfig() { Address = "https://raw.githubusercontent.com" } }
                         }
                     },
-                    new Cluster()
+                    new ()
                     {
-                        Id = "__github_camoCluster",
-                        Destinations = new Dictionary<string, Destination>(StringComparer.OrdinalIgnoreCase)
+                        ClusterId = "__github_camoCluster",
+                        Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
                         {
-                            { "destination1", new Destination() { Address = "https://camo.githubusercontent.com" } }
+                            { "destination1", new DestinationConfig() { Address = "https://camo.githubusercontent.com" } }
                         }
                     },
-                    new Cluster()
+                    new ()
                     {
-                        Id = "__github_codeloadCluster",
-                        Destinations = new Dictionary<string, Destination>(StringComparer.OrdinalIgnoreCase)
+                        ClusterId = "__github_codeloadCluster",
+                        Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
                         {
-                            { "destination1", new Destination() { Address = "https://codeload.github.com" } }
+                            { "destination1", new DestinationConfig() { Address = "https://codeload.github.com" } }
                         }
                     },
-                    new Cluster()
+                    new ()
                     {
-                        Id = "__github_releasesCluster",
-                        Destinations = new Dictionary<string, Destination>(StringComparer.OrdinalIgnoreCase)
+                        ClusterId = "__github_releasesCluster",
+                        Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
                         {
-                            { "destination1", new Destination() { Address = "https://github-releases.githubusercontent.com" } }
+                            { "destination1", new DestinationConfig() { Address = "https://github-releases.githubusercontent.com" } }
                         }
                     },
-                    new Cluster()
+                    new()
                     {
-                        Id = "__github_userImagesCluster",
-                        Destinations = new Dictionary<string, Destination>(StringComparer.OrdinalIgnoreCase)
+                        ClusterId = "__github_userImagesCluster",
+                        Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
                         {
-                            { "destination1", new Destination() { Address = "https://user-images.githubusercontent.com" } }
+                            { "destination1", new DestinationConfig() { Address = "https://user-images.githubusercontent.com" } }
                         }
                     },
                 });
@@ -177,16 +176,16 @@ namespace GitHubProxy.Proxy
 
     internal class InMemoryConfig : IProxyConfig
     {
-        public InMemoryConfig(IReadOnlyList<ProxyRoute> routes, IReadOnlyList<Cluster> clusters)
+        public InMemoryConfig(IReadOnlyList<RouteConfig> routes, IReadOnlyList<ClusterConfig> clusters)
         {
             Routes = routes;
             Clusters = clusters;
             ChangeToken = new CancellationChangeToken(CancellationToken.None);
         }
 
-        public IReadOnlyList<ProxyRoute> Routes { get; }
+        public IReadOnlyList<RouteConfig> Routes { get; }
 
-        public IReadOnlyList<Cluster> Clusters { get; }
+        public IReadOnlyList<ClusterConfig> Clusters { get; }
 
         public IChangeToken ChangeToken { get; }
     }

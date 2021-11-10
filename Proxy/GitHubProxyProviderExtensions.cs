@@ -1,6 +1,6 @@
 ﻿using GitHubProxy.Proxy;
-using Yarp.ReverseProxy.Service;
-using Yarp.ReverseProxy.Service.Proxy.Infrastructure;
+using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Forwarder;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -9,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IReverseProxyBuilder AddGitHubProxy(this IReverseProxyBuilder builder)
         {
             builder.Services.AddSingleton<IProxyConfigProvider, GitHubProxyProvider>();
-            builder.Services.AddSingleton<IProxyHttpClientFactory, GitHubProxyHttpClientFactory>();
+            builder.Services.AddSingleton<IForwarderHttpClientFactory, GitHubProxyHttpClientFactory>();
             builder.AddTransforms<GitHubProxyMainSiteTransformer>();
             builder.AddTransforms<GitHubProxyUniversalTransformer>();
 

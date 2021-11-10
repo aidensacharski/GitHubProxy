@@ -7,8 +7,8 @@ using GitHubProxy.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
-using Yarp.ReverseProxy.Abstractions.Config;
-using Yarp.ReverseProxy.Service.RuntimeModel.Transforms;
+using Yarp.ReverseProxy.Transforms;
+using Yarp.ReverseProxy.Transforms.Builder;
 
 namespace GitHubProxy.Proxy
 {
@@ -105,7 +105,7 @@ namespace GitHubProxy.Proxy
                 }
             }
 
-            if ("text/html".Equals(context.ProxyResponse.Content.Headers.ContentType?.MediaType))
+            if ("text/html".Equals(context.ProxyResponse?.Content.Headers.ContentType?.MediaType))
             {
                 context.HttpContext.Response.ContentLength = null;
                 return new ValueTask(ReadAndReplaceAsync(context.ProxyResponse, context.ProxyResponse.Content.Headers.ContentType?.CharSet, context.HttpContext.RequestAborted));
