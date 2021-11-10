@@ -37,6 +37,7 @@ namespace GitHubProxy
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGet("/robots.txt", () => "User-agent: *\nDisallow: /");
                 endpoints.MapReverseProxy();
             });
 
