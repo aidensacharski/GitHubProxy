@@ -3,8 +3,8 @@
 Proxy access to github.com for computers in restricted network environment.
 
 ## Prerequisites
-* You hava your own domain where multiple subdomains can be added.
-* Your server hava port 80 and 443 available and can be access from the Internet.
+* You have your own domain where multiple subdomains can be added.
+* Your server have port 80 and 443 available and can be access from the Internet.
 
 ## Installation Steps
 
@@ -58,7 +58,7 @@ apt install caddy
 ```
 
 ### Step 6: Configure Caddy
-Modify caddy file to forward requests for the domains you hava configured in Step 1.
+Modify caddy file to forward requests for the domains you have configured in Step 1.
 ```
 http://yourdomain.example.com {
   redir https://{host}{uri}
