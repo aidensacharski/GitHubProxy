@@ -191,8 +191,8 @@ namespace GitHubProxy.Proxy
                 logger.LogError("ObjectsDomain is incorrectly configured.");
                 return;
             }
-            _userImagesDomain = options.ObjectsDomain;
-            _userImagesDomainUri = objectsDomainUri;
+            _objectsDomain = options.ObjectsDomain;
+            _objectsDomainUri = objectsDomainUri;
 
             _isConfigured = true;
         }
