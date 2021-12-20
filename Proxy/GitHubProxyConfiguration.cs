@@ -33,6 +33,9 @@ namespace GitHubProxy.Proxy
         string UserImagesDomain { get; }
         string UserImagesDomainAuthority { get; }
         string UserImagesDomainHost { get; }
+        string ObjectsDomain { get; }
+        string ObjectsDomainAuthority { get; }
+        string ObjectsDomainHost { get; }
 
         bool IsConfigured { get; }
         bool UseProxy { get; }
@@ -54,6 +57,7 @@ namespace GitHubProxy.Proxy
         private readonly string? _codeloadDomain;
         private readonly string? _releasesDomain;
         private readonly string? _userImagesDomain;
+        private readonly string? _objectsDomain;
 
         private readonly Uri? _homeDomainUri;
         private readonly Uri? _blackholeDomainUri;
@@ -64,6 +68,7 @@ namespace GitHubProxy.Proxy
         private readonly Uri? _codeloadDomainUri;
         private readonly Uri? _releasesDomainUri;
         private readonly Uri? _userImagesDomainUri;
+        private readonly Uri? _objectsDomainUri;
 
         public bool IsConfigured => _isConfigured;
         public bool UseProxy => _useProxy;
@@ -78,6 +83,7 @@ namespace GitHubProxy.Proxy
         public string CodeloadDomain => _codeloadDomain ?? ThrowInvalidOpearationException();
         public string ReleasesDomain => _releasesDomain ?? ThrowInvalidOpearationException();
         public string UserImagesDomain => _userImagesDomain ?? ThrowInvalidOpearationException();
+        public string ObjectsDomain => _objectsDomain ?? ThrowInvalidOpearationException();
 
         public string HomeDomainAuthority => _homeDomainUri?.Authority ?? ThrowInvalidOpearationException();
         public string BlackholeDomainAuthority => _blackholeDomainUri?.Authority ?? ThrowInvalidOpearationException();
@@ -88,6 +94,7 @@ namespace GitHubProxy.Proxy
         public string CodeloadDomainAuthority => _codeloadDomainUri?.Authority ?? ThrowInvalidOpearationException();
         public string ReleasesDomainAuthority => _releasesDomainUri?.Authority ?? ThrowInvalidOpearationException();
         public string UserImagesDomainAuthority => _userImagesDomainUri?.Authority ?? ThrowInvalidOpearationException();
+        public string ObjectsDomainAuthority => _objectsDomainUri?.Authority ?? ThrowInvalidOpearationException();
 
         public string HomeDomainHost => _homeDomainUri?.Authority ?? ThrowInvalidOpearationException();
         public string BlackholeDomainHost => _blackholeDomainUri?.Host ?? ThrowInvalidOpearationException();
@@ -98,6 +105,7 @@ namespace GitHubProxy.Proxy
         public string CodeloadDomainHost => _codeloadDomainUri?.Host ?? ThrowInvalidOpearationException();
         public string ReleasesDomainHost => _releasesDomainUri?.Host ?? ThrowInvalidOpearationException();
         public string UserImagesDomainHost => _userImagesDomainUri?.Host ?? ThrowInvalidOpearationException();
+        public string ObjectsDomainHost => _objectsDomainUri?.Host ?? ThrowInvalidOpearationException();
 
 
         public GitHubProxyConfiguration(IOptions<GitHubProxyOptions> optionAccessor, ILogger<GitHubProxyConfiguration> logger)
@@ -177,6 +185,14 @@ namespace GitHubProxy.Proxy
             }
             _userImagesDomain = options.UserImagesDomain;
             _userImagesDomainUri = userImagesDomainUri;
+
+            if (string.IsNullOrEmpty(options.ObjectsDomain) || !Uri.TryCreate(options.ObjectsDomain, UriKind.Absolute, out Uri? objectsDomainUri))
+            {
+                logger.LogError("ObjectsDomain is incorrectly configured.");
+                return;
+            }
+            _userImagesDomain = options.ObjectsDomain;
+            _userImagesDomainUri = objectsDomainUri;
 
             _isConfigured = true;
         }

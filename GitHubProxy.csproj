@@ -8,7 +8,6 @@
     <Product>GitHubProxy</Product>
     <Authors>yigolden</Authors>
     <Copyright>Copyright (c) 2021 yigolden</Copyright>
-    <UserSecretsId>aaf67999-7f69-448d-bac8-cff0e83cb7eb</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -14,5 +14,6 @@
         public string? CodeloadDomain { get; set; }
         public string? ReleasesDomain { get; set; }
         public string? UserImagesDomain { get; set; }
+        public string? ObjectsDomain { get; set; }
     }
 }

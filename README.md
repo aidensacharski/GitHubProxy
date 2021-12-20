@@ -4,7 +4,7 @@ Proxy access to github.com for computers in restricted network environment.
 
 ## Prerequisites
 * You have your own domain where multiple subdomains can be added.
-* Your server have port 80 and 443 available and can be access from the Internet.
+* Your server has port 80 and 443 available and can be access from the Internet.
 
 ## Installation Steps
 
@@ -21,6 +21,7 @@ camo.yourdomain.example.com
 codeload.yourdomain.example.com
 releases.yourdomain.example.com
 user-images.yourdomain.example.com
+objects.yourdomain.example.com
 ```
 Your can use wildcard if your service provider allows it.
 
@@ -67,7 +68,7 @@ https://yourdomain.example.com {
   reverse_proxy 127.0.0.1:9000
 }
 
-# 8 other domains omitted
+# other domains omitted
 ```
 
 ### Step 7: Configure Caddy to always run on system startup

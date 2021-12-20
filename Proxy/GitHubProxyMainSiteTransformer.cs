@@ -18,6 +18,7 @@ namespace GitHubProxy.Proxy
         private readonly string _rawDomain;
         private readonly string _codeloadDomain;
         private readonly string _releasesDomain;
+        private readonly string _objectsDomain;
 
         private readonly Utf8StringReplaceDirective[] _directives;
         private readonly ILogger _logger;
@@ -28,6 +29,7 @@ namespace GitHubProxy.Proxy
             _rawDomain = configuration.RawDomain;
             _codeloadDomain = configuration.CodeloadDomain;
             _releasesDomain = configuration.ReleasesDomain;
+            _objectsDomain = configuration.ObjectsDomain;
 
             _directives = new[]
             {
@@ -94,6 +96,11 @@ namespace GitHubProxy.Proxy
                 {
                     headers.Remove("Location");
                     headers.Add("Location", string.Concat(_releasesDomain, value[0].AsSpan(45)));
+                }
+                else if (value[0].StartsWith("https://objects.githubusercontent.com"))
+                {
+                    headers.Remove("Location");
+                    headers.Add("Location", string.Concat(_objectsDomain, value[0].AsSpan(37)));
                 }
             }
             if (headers.TryGetValue("x-pjax-url", out value) && value.Count == 1)
